@@ -192,19 +192,21 @@ var monthArray = d3.time.scale()
 
 // check if there is data for each month in monthArray, if so append count, otherwise append null
 var dataset = [];
+var running_total = 0;
 for(var i=0; i<monthArray.length; i++){
-
 	var n = metricMonths.indexOf(monthArray[i].getTime());
 	if (n>-1) {
-		var count = metricCount[n];
+		var running_total = running_total + metricCount[n];
+		var data_point = true;
 	} else {
-		var count = null;
+		var running_total = running_total;
+		var data_point = false;
 	}
-	dataset.push({count: count, month: monthArray[i]});
+	dataset.push({count: running_total, month: monthArray[i], data_point: data_point});
 }
 
 // a dataset without the null values is also needed to draw the missing data lines/areas
-var dataset_no_null = dataset.filter(function(d) { return d.count !== null; });
+var dataset_no_null = dataset;
 
 /*
 * ========================================================================
@@ -293,7 +295,7 @@ var xAxis_context = d3.svg.axis()
 /* === Focus Chart === */
 
 var line = d3.svg.line()
-	.defined(function(d) { return d.count !== null; })
+	.defined(function(d) { return d.data_point == true; })
 	.x(function(d) { return x(d.month); })
 	.y(function(d) { return y(d.count); });
 
@@ -316,7 +318,7 @@ var area_missing = d3.svg.area()
 /* === Context Chart === */
 
 var line_context = d3.svg.line()
-	.defined(function(d) { return d.count !== null; })
+	.defined(function(d) { return d.data_point !== false; })
     .x(function(d) { return x2(d.month); })
     .y(function(d) { return y2(d.count); });
 

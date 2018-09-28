@@ -9,6 +9,7 @@
 
 **CONS:**
 - data points with missing data the month before and after are 'hidden' (e.g. May 2014).
+- difficult to notice spikes or trends in views/downloads.
 
 ---
 
